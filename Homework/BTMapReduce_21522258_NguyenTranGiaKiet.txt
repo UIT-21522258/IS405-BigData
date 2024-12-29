@@ -1,0 +1,119 @@
+//Bài 1a
+Map(String docId, String text):
+        arr[] = split(line, ", ");
+        Emit(arr[0], arr[1]);
+
+Reduce(String path, Iterator<Int> values):
+    int total_time = 0
+    for each v in values:
+        total_time += v;
+    Emit(path, total_time)
+
+
+//Bài 2a
+Map(String docId, String text):
+        arr[] = split(line, ", ");
+        sales = ParseInt(arr[2]) * ParseInt(arr[3]);
+        Emit(arr[0], sales);
+
+Reduce(String product_id, Iterator<Int> values):
+    int sum = 0;
+    for each v in values:
+        sum += v;
+    Emit(product_id, sum);
+
+//Bài 3a 
+Map(String docId, String text):
+        arr[] = split(line, ", ");
+        if arr[1] == "CO":
+            Emit(arr[0], ParseFloat(arr[2]));
+
+Reduce(String sensor_id, Iterator<Float> values):
+    float sum_co = 0;
+    int count = 0;
+    float average_co = 0;
+    for each v in values:
+        sum_co += v;
+        count += 1;
+    if count > 0:
+        average_co = sum_co / count;
+    Emit(sensor_id, average_co);
+
+//Bài 4
+Map(String docid, String text):
+        number = ParseFloat(line);         
+        Emit("mean", number);             
+        Emit("count", 1);
+
+Reduce(String key, Iterator<Float> values):
+    if key == "mean":
+        float product = 1
+        int count = 0;
+        for each v in values:
+            product *= v;              
+            count += 1;
+        if count > 0:
+            float geometric_mean = product ^ (1.0 / count);
+            Emit("geometric_mean", geometric_mean);
+    else if key == "count":
+        int total_count = 0;
+        for each v in values:
+            total_count += v;
+        Emit("total_count", total_count);
+
+//Bài 5
+Map(String docid, String text):
+        arr[] = split(line, ", ");    
+        int values = ParseInt(arr[1]);
+        if(values <= 100):
+            Emit(arr[0], values * 1.734);
+        else if(values <= 200):
+            Emit(arr[0], (100*1.734) + ((values - 100) * 2.014));
+        else if(values <= 300):
+            Emit(arr[0], (100*1.734) + (100 * 2.014) + ((values - 200) * 2.536));
+        else:
+            Emit(arr[0], (100*1.734) + (100 * 2.014) + (100  * 2.536) + ((values - 300) * 2.834));
+
+Reduce(String family_id, Iterator<Float> values):
+    float sum=0;
+    for each v in values:
+        sum += v;
+    Emit(family_id, sum);
+
+//Bài 6
+Map(String path, Int total_time):
+    Emit("max", total_time);           
+    Emit("min", total_time);      
+
+Reduce(String key, Iterator<Int> values):
+    if key == "max":
+        int max_time = 0;
+        for each v in values:
+            if v > max_time:
+                max_time = v;
+        Emit("website_with_max_time", max_time);
+
+    if key == "min":
+        int min_time = Integer.MAX_VALUE;
+        for each v in values:
+            if v < min_time:
+                min_time = v;
+        Emit("website_with_min_time", min_time);
+
+//Bài 7
+Map(String docId, String text):
+        arr[] = split(line, ", ");
+        Emit(arr[3], (1, ParseInt(arr[4])));
+
+Reduce(String department, Iterator<Tuple> values):
+    int total = 0;
+    int max_salary = 0;
+    int min_salary = Integer.MAX_VALUE;
+    for each v in values:
+        total += v[0];
+        int salary = v[1];
+        if salary > max_salary:
+            max_salary = salary;
+        else salary < min_salary:
+            min_salary = salary;
+    Emit(department, (total_count, max_salary, min_salary));
